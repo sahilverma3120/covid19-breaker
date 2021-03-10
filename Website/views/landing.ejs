@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8"><title>Vit Hack</title>
+	<link rel="stylesheet" href="/css/landing.css">
+	<link rel="stylesheet" href="/css/chat.css">
+	<link rel="stylesheet" href="/css/styles.css">
+	<link rel="stylesheet" href="/css/settings.css">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="/js/particles.js"></script>
+	<script src="/js/app.js"></script>
+	<script type="text/javascript">
+		
+		function contacttable(){
+			$.ajax({
+			url: "https://api.rootnet.in/covid19-in/contacts",
+			dataType: "json",
+			type: "GET",
+			success: function(data){
+				// var table = document.getElementById("contact-table");
+				// 	  var row = table.insertRow(0);
+				// 	  var cell1 = row.insertCell(0);
+				// 	  var cell2 = row.insertCell(1);
+				// 	  cell1.innerHTML = "<b>Location<b>";
+				// 	  cell2.innerHTML = "<b>Number<b>";
+				 data["data"]["contacts"]["regional"].forEach(function(state, index){
+					 // console.log(state["loc"] + "-" + state["number"]);
+					  var table = document.getElementById("contact-table");
+					  var row = table.insertRow(index+1);
+					  var cell1 = row.insertCell(0);
+					  var cell2 = row.insertCell(1);
+					  cell1.innerHTML = state["loc"];
+					  cell2.innerHTML = state["number"];
+				 })
+			}
+			})
+		}
+		function notifications(){
+			$.ajax({
+			url: "https://api.rootnet.in/covid19-in/notifications",
+			dataType: "json",
+			type: "GET",
+			success: function(data){
+				// var table = document.getElementById("notifications");
+				// 	  var row = table.insertRow(0);
+				// 	  var cell1 = row.insertCell(0);
+				// 	  var cell2 = row.insertCell(1);
+				// 	  cell1.innerHTML = "<b>Title<b>";
+				// 	  cell2.innerHTML = "<b>Link<b>";
+				 data.data.notifications.forEach(function(state, index){
+					  var table = document.getElementById("notifications");
+					  var row = table.insertRow(index+1);
+					  var cell1 = row.insertCell(0);
+					  var cell2 = row.insertCell(1);
+					  cell1.innerHTML = state["title"];
+					  cell2.innerHTML = '<a href="'+state["link"]+'">'+state["link"]+'</a>';
+				 })
+			}
+			})
+		}
+		function hospitalbed(){
+			$.ajax({
+			url: "https://api.rootnet.in/covid19-in/hospitals/beds",
+			dataType: "json",
+			type: "GET",
+			success: function(data){
+				// var table = document.getElementById("hospital-bed");
+				// var row = table.insertRow(0);
+				// var cell1 = row.insertCell(0);
+				// var cell2 = row.insertCell(1);
+				// var cell3 = row.insertCell(2);
+				// var cell4 = row.insertCell(3);
+				// var cell5 = row.insertCell(4);
+				// var cell6 = row.insertCell(5);
+				// var cell7 = row.insertCell(6);
+				// var cell8 = row.insertCell(7);
+				// cell1.innerHTML = "<b>State<b>";
+				// cell2.innerHTML = "<b>Rural Hospitals<b>";
+				// cell3.innerHTML = "<b>Rural Beds<b>";
+				// cell4.innerHTML = "<b>Urban Hospitals<b>";
+				// cell5.innerHTML = "<b>Urban Beds<b>";
+				// cell6.innerHTML = "<b>Total Hospitals<b>";
+				// cell7.innerHTML = "<b>Total Beds<b>";
+				// cell8.innerHTML = "<b>As On<b>";
+				 data["data"]["regional"].forEach(function(state, index){
+					var table = document.getElementById("hospital-bed");
+					var row = table.insertRow(index+1);
+					Object.keys(state).forEach(function(item,j){
+						 var cell = row.insertCell(j);
+						 cell.innerHTML = state[item];
+					 })
+				 })
+			}
+			})
+		}
+		function collegebed(){
+			$.ajax({
+			url: "https://api.rootnet.in/covid19-in/hospitals/medical-colleges",
+			dataType: "json",
+			type: "GET",
+			success: function(data){
+				// var table = document.getElementById("college-bed");
+				// var row = table.insertRow(0);
+				// var cell1 = row.insertCell(0);
+				// var cell2 = row.insertCell(1);
+				// var cell3 = row.insertCell(2);
+				// var cell4 = row.insertCell(3);
+				// var cell5 = row.insertCell(4);
+				// var cell6 = row.insertCell(5);
+				// cell1.innerHTML = "<b>State<b>";
+				// cell2.innerHTML = "<b>Name<b>";
+				// cell3.innerHTML = "<b>City<b>";
+				// cell4.innerHTML = "<b>Ownership<b>";
+				// cell5.innerHTML = "<b>Admission Capacity<b>";
+				// cell6.innerHTML = "<b>Hospital Beds<b>";
+				data["data"]["medicalColleges"].forEach(function(state, index){
+					var table = document.getElementById("college-bed");
+					var row = table.insertRow(index+1);
+					Object.keys(state).forEach(function(item,j){
+						 var cell = row.insertCell(j);
+						 cell.innerHTML = state[item];
+					 })
+				 })
+			}
+			})
+		}
+	
+	
+	</script>
+</head>
+<body onload="contacttable();notifications();hospitalbed();collegebed();">
+		<script type="text/javascript"></script>
+	<script>
+  function removeEmpties() {return true;}
+		
+	function download() {
+		console.log("hello");
+  // get size of report page
+  var reportPageHeight = 1000;//$('#reportPage').innerHeight();
+  var reportPageWidth = 2500;//$('#reportPage').innerWidth();
+
+  // create a new canvas object that we will populate with all other canvas objects
+  var pdfCanvas = $('<canvas />').attr({
+    id: "canvaspdf",
+    width: reportPageWidth,
+    height: reportPageHeight
+  });
+
+  // keep track canvas position
+  var pdfctx = $(pdfCanvas)[0].getContext('2d');
+  var pdfctxX = 0;
+  var pdfctxY = 0;
+  var buffer = 100;
+
+  // for each chart.js chart
+  $("canvas").each(function(index) {
+    // get the chart height/width
+    var canvasHeight = $(this).innerHeight();
+    var canvasWidth = $(this).innerWidth();
+
+    // draw the chart into the new canvas
+    pdfctx.drawImage($(this)[0], pdfctxX, pdfctxY, canvasWidth, canvasHeight);
+    pdfctxX += canvasWidth + buffer;
+
+    // our report page is in a grid pattern so replicate that in the new canvas
+    if (index % 2 === 1) {
+      pdfctxX = 0;
+      pdfctxY += canvasHeight + buffer;
+    }
+  });
+
+  // create new pdf and add our new canvas as an image
+  var pdf = new jsPDF('l', 'pt', [reportPageWidth, reportPageHeight]);
+  pdf.addImage($(pdfCanvas)[0], 'PNG', 0, 0);
+
+  // download the pdf
+  pdf.save('graph.pdf');
+}
+
+	</script>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	<nav>
+		<a href="#fifth"><i class="fas fa-home"></i></a>
+	   <a href="#first"><i class="fas fa-chart-line"></i></a>
+	   <a href="#second"><i class="fa fa-bell"></i></a>
+	   <a href="#third"><i class="fa fa-bed"></i></a>
+	   <a href="#fourth"><i class="fa fa-phone"></i></a>
+	 </nav>
+
+		 
+		  <!-- settings -->
+	  	<div class="settings" align="center" id="dark">
+	
+		<div class="heading" style="margin:3%;text-align:center;;">
+			<span style="color:black;font-size:30px;">Donate to those affected by this pandemic</span><br>
+			<small class="text-muted"><a style="font-size:20px;" href="/api/docs">Let's stay Apart and do our Part</a></small>
+			
+		</div>
+			<p style="">
+				This pandemic has not just been a public health crisis but also an economic crisis. And this economic crisis has hit the poor the hardest. The lack of consumer spending and lockdowns have left many families hungry and can have long lasting effects like students dropping out of school.
+To help those worst affected, consider donating to any of the NGO who will help these families when they need it most.
+
+			</p><br><br>
+			<img src="/donate.png"><br><br><br>
+			<p>
+				SUPPORT AKSHAYA PATRA'S COVID-19 RELIEF SERVICE : <a href="https://www.akshayapatra.org/covid-relief-services">https://www.akshayapatra.org/covid-relief-services</a>
+			</p>
+			<p>
+Save the children :<a href="https://support.savethechildren.in/">https://support.savethechildren.in/</a> 
+
+			</p>
+			
+		<div style="display:flex;padding-top:0%;">
+			
+		</div>
+		<div style="margin-top:5%;">
+			
+			<button class="btn btn-primary" style="padding:10px;" onclick="offS();">Back</button>
+		</div>
+		
+	</div>
+	  <!-- settings -->
+	
+	
+	 <!-- settings -->
+	  	<div class="machine" style="display:none;" id="particle2" align="center" id="dark">
+	
+		<div class="heading" style="margin:3%;text-align:center;;">
+			<span style="color:black;font-size:30px;">Corona facts</span><br>
+			<!-- <small class="text-muted"><a style="font-size:20px;" href="/api/docs">Let's stay Apart and do our Part</a></small> -->
+			
+		</div>
+			<p>
+				
+			
+On average it takes 5–6 days from when someone is infected with the virus for symptoms to show, however it can take up to 14 days. People with mild symptoms who are otherwise healthy should self-isolate. Seek medical attention if you have a fever, a cough, and difficulty breathing.
+
+COVID-19 affects different people in different ways. Most infected people will develop mild to moderate symptoms.</p>
+<div class="heading" style="margin:3%;text-align:center;">
+			<span style="color:black;font-size:30px;">Common Symptoms</span><br>
+			<!-- <small class="text-muted"><a style="font-size:20px;" href="/api/docs">Let's stay Apart and do our Part</a></small> -->
+			
+		</div>
+<p>
+Fever.
+Tiredness.
+Dry Cough.
+Some People May Experience
+Aches And Pains.
+Nasal Congestion.
+Runny
+Nose.
+Sore Throat.
+Diarrhoea.
+			</p><br>
+
+			
+			<ul style="color:white;list-style-type:none;text-align: left;margin-left:40%;">
+				<li>0 0.357512 fever</li>
+				<li>1 0.026941 bodyPain</li>
+				<li>2 0.242557 age</li>
+				<li>3 0.024525 runnyNose</li>
+				<li>4 0.042023 Moderate_severe_cough</li>
+				<li>5 0.021968 Dry_Cough</li>
+				<li>6 0.023183 Sore_throat</li>
+				<li>7 0.032475 Weakness</li>
+				<li>8 0.044766 Change_in_Appetite</li>
+				<li>9 0.030469 Feeling_breathless</li>
+				<li>10 0.038795 close_contact</li>
+				<li>11 0.034865 Diabetes</li>
+				<li>12 0.042729 heart_dis</li>
+				<li>13 0.037193 kidneydis</li>
+			</ul>
+			
+
+
+			
+
+
+			
+	<br><img src="/stats.jpg"><br><p>
+These are for informational purposes only. Consult your local medical authority for advice. (Source: World Health Organization)
+			</p>
+		<div style="margin-top:5%;">
+			
+			<button class="btn btn-primary" style="padding:10px;" onclick="offM();">Back</button>
+		</div>
+		
+	</div>
+	  <!-- settings -->
+	
+	<div class= 'container fit'> 
+		
+		
+		
+		<!-- ------------------------------------------------------------------------------------------------------------------- -->
+		
+		  <div class="fabs">
+  <div class="chat">
+    <div class="chat_header">
+      <div class="chat_option">
+
+        <span id="chat_head"></span> <br> <span class="agent" style="margin-left:5%;">Chat Bot</span> <span class="online">(Online)</span>
+       <span id="chat_fullscreen_loader" class="chat_fullscreen_loader"><i class="fullscreen zmdi zmdi-window-maximize"></i></span>
+
+      </div>
+
+    </div>
+    <div class="chat_body chat_login">
+        <!-- <a id="chat_first_screen" class="fab"><i class="zmdi zmdi-arrow-right"></i></a>
+        <p>We make it simple and seamless for businesses and people to talk to each other. Ask us anything</p> -->
+		<div class="chat_category">
+          <!-- <a id="chat_first_screen" class="fab"><i class="zmdi zmdi-arrow-right"></i></a> -->
+        <p>Are you currently experiencing high temepereture?</p>
+        <ul>
+          <span ><a style="top:0;" href="#fourth">Yes</a></span><br>
+          <span id="chat_first_screen">No</span>
+        </ul>
+        </div>
+    </div>
+    <div id="chat_converse" class="chat_conversion chat_converse">
+            <!-- <a id="chat_second_screen" class="fab"><i class="zmdi zmdi-arrow-right"></i></a> -->
+      <div class="chat_category">
+          <!-- <a id="chat_second_screen" class="fab"><i class="zmdi zmdi-arrow-right"></i></a> -->
+        <p style="color:black;">Are you experiencing Dry cough?</p>
+        <ul>
+          <span ><a href="#fourth">Yes</a></span><br>
+          <span id="chat_second_screen">No</span>
+        </ul>
+        </div>
+    </div>
+    <div id="chat_body" class="chat_body">
+        <div class="chat_category">
+          <!-- <a id="chat_third_screen" class="fab"><i class="zmdi zmdi-arrow-right"></i></a> -->
+        <p>Are you experiencing  Tiredness/Change in Appetite</p>
+        <ul>
+          <span ><a href="#fourth">Yes</a></span><br>
+          <span id="chat_third_screen">No</span>
+        </ul>
+        </div>
+
+    </div>
+    <div id="chat_form" class="chat_converse chat_form">
+    <!-- <a id="chat_fourth_screen" class="fab"><i class="zmdi zmdi-arrow-right"></i></a> -->
+      <div class="chat_category">
+          <!-- <a id="chat_fourth_screen" class="fab"><i class="zmdi zmdi-arrow-right"></i></a> -->
+        <p style="color:black;">Are you feeling breathless?</p>
+        <ul>
+          <span><a style="margin-top:-10%;" href="#fourth">Yes</a></span><br>
+          <span id="chat_fourth_screen">No</span>
+        </ul>
+        </div>   
+    </div>
+      <div id="chat_fullscreen" class="chat_conversion chat_converse">
+      <span class="chat_msg_item chat_msg_item_admin">
+            <div class="chat_avatar">
+               <img src="http://res.cloudinary.com/dqvwa7vpe/image/upload/v1496415051/avatar_ma6vug.jpg"/>
+            </div>You don’t seem to be experiencing any symptoms of corona. Stay safe and maintain social distance</span>
+     
+    </div>
+    <div class="fab_field">
+      <a id="fab_camera" class="fab"><i class="zmdi zmdi-camera"></i></a>
+      <a id="fab_send" class="fab"><i class="zmdi zmdi-mail-send"></i></a>
+      <textarea id="chatSend" name="chat_message" placeholder="Send a message" class="chat_field chat_message"></textarea>
+    </div>
+  </div>
+    <a id="prime" class="fab"><i class="prime zmdi zmdi-comment-outline"></i></a>
+</div>
+  <script src='http://code.jquery.com/jquery-1.11.3.min.js'></script>
+
+    <script src="/js/chat.js"></script>
+		
+		
+		
+		<!-- ------------------------------------------------------------------------------------------------------------------- -->
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		<div style="z-index:50;right:5%;position:absolute;border-radius:50%;background-color:#4287f5;width:80px;height:80px;padding-left:20px;padding-top:20px;;" >
+		<button style="border:none;background-color:#4287f5" class="btn btn-primary" onclick="onS();"><i style="color:black;border:none;" class="fas fa-donate fa-3x"></i></button>
+	</div>
+		<div style="z-index:50;right:15%;position:absolute;border-radius:50%;background-color:#4287f5;width:80px;height:80px;padding-left:20px;padding-top:20px;" >
+		<button style="border:none;background-color:#4287f5" class="btn btn-primary" onclick="onM();"><i style="color:black;"class="fas fa-ambulance fa-3x"></i></button>
+	</div>
+		 <!-- <div id="particles-js" style="height:100%;"> -->
+			  <!-- <div class="heading" style="color:white;text-align:center;font-size:50px;padding-top:25%;">
+				  ALL YOU NEED TO KNOW ABOUT COVID19 INDIA -->
+				  <span id="fifth"><div id="particles-js" style="height:100%;text-align:center;color:white;"><span style="position:absolute;padding-top:20%;padding-left:30%;font-size:30px;">ALL YOU NEED TO KNOW ABOUT COVID19 INDIA</span></div></span>
+		 
+			 <!-- </div> -->
+		  <!-- </div> -->
+		<section id="fifth"></section>
+	  <section id= 'first'>
+		<!-- ------------------------------------------------------------------------------------------------------------------------ -->
+
+		 
+		  <div class="table-wrapper">		
+		  <div class="heading" style="margin:3%;text-align:center;;">
+			<span style="color:black;font-size:30px;">Visualise the data</span><br>
+			<small class="text-muted"><a style="font-size:20px;" href="/api/docs">API Documentation</a></small>
+		</div>
+	
+	<div style="padding-left:10%;">
+	<form id="theform" action="https://vithack.herokuapp.com/api/deceased" method="GET" onsubmit="return removeEmpties()">
+
+	<div class="form-row" style="display:flex;">
+
+<div class="form-group col-md-4">
+  <label for="state">State</label>
+  <select name="state" id="state" class="form">
+	<option value="">All States</option>
+<option value="Andhra Pradesh">Andhra Pradesh</option>
+<option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+<option value="Assam">Assam</option>
+<option value="Bihar">Bihar</option>
+<option value="Chandigarh">Chandigarh</option>
+<option value="Chhattisgarh">Chhattisgarh</option>
+<option value="Dadar and Nagar Haveli">Dadar and Nagar Haveli</option>
+<option value="Daman and Diu">Daman and Diu</option>
+<option value="Delhi">Delhi</option>
+<option value="Lakshadweep">Lakshadweep</option>
+<option value="Puducherry">Puducherry</option>
+<option value="Goa">Goa</option>
+<option value="Gujarat">Gujarat</option>
+<option value="Haryana">Haryana</option>
+<option value="Himachal Pradesh">Himachal Pradesh</option>
+<option value="Jammu and Kashmir">Jammu and Kashmir</option>
+<option value="Jharkhand">Jharkhand</option>
+<option value="Karnataka">Karnataka</option>
+<option value="Kerala">Kerala</option>
+<option value="Madhya Pradesh">Madhya Pradesh</option>
+<option value="Maharashtra">Maharashtra</option>
+<option value="Manipur">Manipur</option>
+<option value="Meghalaya">Meghalaya</option>
+<option value="Mizoram">Mizoram</option>
+<option value="Nagaland">Nagaland</option>
+<option value="Odisha">Odisha</option>
+<option value="Punjab">Punjab</option>
+<option value="Rajasthan">Rajasthan</option>
+<option value="Sikkim">Sikkim</option>
+<option value="Tamil Nadu">Tamil Nadu</option>
+<option value="Telangana">Telangana</option>
+<option value="Tripura">Tripura</option>
+<option value="Uttar Pradesh">Uttar Pradesh</option>
+<option value="Uttarakhand">Uttarakhand</option>
+<option value="West Bengal">West Bengal</option>
+</select>
+</div>
+
+<div class="form-group col-md-4">
+  <label for="gender">Gender</label>
+  <select name="gender" id="gender" class="form">
+			<option value="male">Male</option>
+			<option value="female">Female</option>
+			<option value="">Both</option>
+		</select>
+</div>
+		<div class="form-group col-md-4">
+		<label for="ageEstimate">Age</label>
+		<input name="ageEstimate" id="ageEstimate" value="">
+	  </div>
+
+</div>
+
+
+
+	  
+	  <!-- <div class="form-group col-md-4">
+		<label for="reportedOn">Date</label>
+		<input name="reportedOn" id="reportedOn" value="">
+	  </div> -->
+		<div style="margin-left:35%;">
+			<br>
+			<button id="button1" type="submit" class="btn btn-primary">Get graph</button>
+		</div>
+
+	</form>
+			  </div>
+	<div style="padding-left:1%;padding-right:1%;"><canvas id="myChart1" width="1500" height="400"></canvas></div>
+	<div style="padding-left:1%;padding-right:1%;"><canvas id="myChart2" width="1500" height="400"></canvas></div>
+	<div style="padding-left:1%;padding-right:1%;"><canvas id="myChart3" width="1500" height="400"></canvas></div>
+		
+		<div style="text-align:center;">
+			<button id="button2" onclick="download();" class="btn btn-primary">Download Graph</button>
+		</div>
+		  </div>
+		  
+		<!-- ---------------------------------------------------------------------------------------------------------------------------- -->
+		  
+		  
+		  
+		  
+		  
+		  
+	  </section>
+
+	  <section id= 'second'>
+		
+		  <div class="table-wrapper">
+			  <div class="heading">
+			NOTIFIACATIONS AND ADVISARIES
+		  </div>
+		  <table class="fl-table" id="notifications">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Link</th>
+					</tr>
+				</thead>
+			</table>
+		  </div>
+	  </section>
+
+	 <section id= 'third'>
+		
+		 <div class="table-wrapper">
+			 <div class="heading">
+			HOSPITALS AND BEDS
+		  </div>
+			 <table class="fl-table" id="hospital-bed">
+				<thead>
+					<tr>
+						<th>State</th>
+						<th>Rural Hospitals</th>
+						<th>ural Beds</th>
+						<th>Urban Hospitals</th>
+						<th>Urban Beds</th>
+						<th>Total Hospitals</th>
+						<th>Total Beds</th>
+						<th>Hospital Beds</th>
+					</tr>
+				</thead>
+			</table>
+		 </div>
+		  <div class="table-wrapper">
+			  <div class="heading">
+			MEDICAL COLLEGE AND BEDS
+		  </div>
+			 <table class="fl-table" id="college-bed">
+				<thead>
+					<tr>
+						<th>State</th>
+						<th>Name</th>
+						<th>City</th>
+						<th>Ownership</th>
+						<th>Admission Capacity</th>
+						<th>Number</th>
+					</tr>
+				</thead>
+			</table>
+		 </div>
+	  </section>
+
+	 <section id= 'fourth'>
+		 
+
+
+		 <div class="table-wrapper">
+			 <div class="heading">
+				 CONTACT AND HELPLINE
+			 </div>
+				
+
+			<table class="fl-table" id="contact-table">
+					<thead>
+				<tr>
+						<th>Location</th>
+					<th>Number</th>
+				</tr>
+				</thead>
+			</table>
+		  </div>
+	  </section>
+	</div>
+	<script>
+	document.getElementById("theform").addEventListener('submit', (ev) => {
+  //Optional, prevents redirect
+  ev.preventDefault()
+  
+  //ev.currentTarget is the form element
+  var data = new FormData(ev.currentTarget);
+
+  //modification of the code from this answer: https://stackoverflow.com/a/24964658/7448536
+  var queryParts = [];
+  var entries = data.entries()
+  for(var pair of entries){
+	  if(encodeURIComponent(pair[1])!="")
+    queryParts.push(encodeURIComponent(pair[0]) + "=" + encodeURIComponent(pair[1]));
+  }
+  var Query = queryParts.join("&")
+  var loc = window.location;
+  //reassemble the url
+  // var url = loc.protocol+'//'+loc.host+loc.pathname+'?'+query
+  console.log(Query);
+		
+		
+		$.ajax({
+			url: "/api/deceased?status=Deceased&"+Query,
+			dataType: "json",
+			type: "GET",
+			success: function(result){
+				console.log(result);
+				var date = [];
+				var person = [];
+				var umap = {};
+				var newdate=[];
+				result.forEach(function(report){
+					date.push(report["reportedOn"]);
+				})
+				date.forEach(function(curr){
+					if(umap.hasOwnProperty(curr)){
+						umap[curr]++;
+					}
+					else{
+						umap[curr]=1;
+					}
+				})
+				for (key in umap){
+					newdate.push(key);
+					person.push(umap[key]);
+				}
+				
+				var ctx = document.getElementById('myChart1').getContext('2d');	
+				var myChart = new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: newdate,
+						datasets: [{
+							label: '# of Deceased people',
+							data: person,
+							// backgroundColor: [
+							// 	'rgba(255, 99, 132, 0.2)',
+							// 	'rgba(54, 162, 235, 0.2)',
+							// 	'rgba(255, 206, 86, 0.2)',
+							// 	'rgba(75, 192, 192, 0.2)',
+							// 	'rgba(153, 102, 255, 0.2)',
+							// 	'rgba(255, 159, 64, 0.2)'
+							// ],
+							backgroundColor:['rgba(242, 14, 10, 0.2)'],
+							// borderColor: [
+							// 	'rgba(255, 99, 132, 1)',
+							// 	'rgba(54, 162, 235, 1)',
+							// 	'rgba(255, 206, 86, 1)',
+							// 	'rgba(75, 192, 192, 1)',
+							// 	'rgba(153, 102, 255, 1)',
+							// 	'rgba(255, 159, 64, 1)'
+							// ],
+							borderColor:['rgba(54, 162, 235, 1)'],
+							borderWidth: 1
+						}]
+					},
+					responsive: true,
+						maintainAspectRatio: false,
+					options: {
+						legend: {
+						labels: {
+							// This more specific font property overrides the global property
+							fontColor: 'black'
+						}
+					},
+						scales: {
+							xAxes: [{
+								ticks: {
+									fontColor: "black",
+								}
+							}],
+							yAxes: [{
+								ticks: {
+									fontColor: "black",
+									beginAtZero: true,
+									max: 10,
+									min: 0,
+									stepSize: 1
+								}
+							}]
+						}
+					}
+				});//chart
+			}
+		})
+		$.ajax({
+			url: "/api/deceased?status=Recovered&"+Query,
+			dataType: "json",
+			type: "GET",
+			success: function(result){
+				console.log(result);
+				var date = [];
+				var person = [];
+				var umap = {};
+				var newdate=[];
+				result.forEach(function(report){
+					date.push(report["reportedOn"]);
+				})
+				date.forEach(function(curr){
+					if(umap.hasOwnProperty(curr)){
+						umap[curr]++;
+					}
+					else{
+						umap[curr]=1;
+					}
+				})
+				for (key in umap){
+					newdate.push(key);
+					person.push(umap[key]);
+				}
+				
+				var ctx = document.getElementById('myChart2').getContext('2d');	
+				var myChart = new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: newdate,
+						datasets: [{
+							label: '# of Recovered people',
+							data: person,
+							// backgroundColor: [
+							// 	'rgba(255, 99, 132, 0.2)',
+							// 	'rgba(54, 162, 235, 0.2)',
+							// 	'rgba(255, 206, 86, 0.2)',
+							// 	'rgba(75, 192, 192, 0.2)',
+							// 	'rgba(153, 102, 255, 0.2)',
+							// 	'rgba(255, 159, 64, 0.2)'
+							// ],
+							backgroundColor:['rgba(23, 70, 145, 0.2)'],
+							// borderColor: [
+							// 	'rgba(255, 99, 132, 1)',
+							// 	'rgba(54, 162, 235, 1)',
+							// 	'rgba(255, 206, 86, 1)',
+							// 	'rgba(75, 192, 192, 1)',
+							// 	'rgba(153, 102, 255, 1)',
+							// 	'rgba(255, 159, 64, 1)'
+							// ],
+							borderColor:['rgba(54, 162, 235, 1)'],
+							borderWidth: 1
+						}]
+					},
+					responsive: true,
+						maintainAspectRatio: false,
+					options: {
+						legend: {
+						labels: {
+							// This more specific font property overrides the global property
+							fontColor: 'black'
+						}
+					},
+						scales: {
+							xAxes: [{
+								ticks: {
+									fontColor: "black",
+								}
+							}],
+							yAxes: [{
+								ticks: {
+									fontColor: "black",
+									beginAtZero: true,
+									max: 10,
+									min: 0,
+									stepSize: 1
+								}
+							}]
+						}
+					}
+				});//chart
+			}
+		})
+		$.ajax({
+			url: "/api/deceased?status=Hospitalized&"+Query,
+			dataType: "json",
+			type: "GET",
+			success: function(result){
+				console.log(result);
+				var date = [];
+				var person = [];
+				var umap = {};
+				var newdate=[];
+				result.forEach(function(report){
+					date.push(report["reportedOn"]);
+				})
+				date.forEach(function(curr){
+					if(umap.hasOwnProperty(curr)){
+						umap[curr]++;
+					}
+					else{
+						umap[curr]=1;
+					}
+				})
+				for (key in umap){
+					newdate.push(key);
+					person.push(umap[key]);
+				}
+				
+				var ctx = document.getElementById('myChart3').getContext('2d');	
+				var myChart = new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: newdate,
+						datasets: [{
+							label: '# of Hospitalized people',
+							data: person,
+							// backgroundColor: [
+							// 	'rgba(255, 99, 132, 0.2)',
+							// 	'rgba(54, 162, 235, 0.2)',
+							// 	'rgba(255, 206, 86, 0.2)',
+							// 	'rgba(75, 192, 192, 0.2)',
+							// 	'rgba(153, 102, 255, 0.2)',
+							// 	'rgba(255, 159, 64, 0.2)'
+							// ],
+							backgroundColor:['rgba(103, 130, 34, 0.2)'],
+							// borderColor: [
+							// 	'rgba(255, 99, 132, 1)',
+							// 	'rgba(54, 162, 235, 1)',
+							// 	'rgba(255, 206, 86, 1)',
+							// 	'rgba(75, 192, 192, 1)',
+							// 	'rgba(153, 102, 255, 1)',
+							// 	'rgba(255, 159, 64, 1)'
+							// ],
+							borderColor:['rgba(54, 162, 235, 1)'],
+							borderWidth: 1
+						}]
+					},
+					responsive: true,
+						maintainAspectRatio: false,
+					options: {
+						legend: {
+						labels: {
+							// This more specific font property overrides the global property
+							fontColor: 'black'
+						}
+					},
+						scales: {
+							xAxes: [{
+								ticks: {
+									fontColor: "black",
+								}
+							}],
+							yAxes: [{
+								ticks: {
+									fontColor: "black",
+									beginAtZero: true,
+									max: 300,
+									min: 15,
+									stepSize: 1
+								}
+							}]
+						}
+					}
+				});//chart
+			}
+		})
+})
+</script>
+<script>
+function onS(){
+	document.getElementsByClassName("fit")[0].style.display="none";
+	document.getElementsByClassName("settings")[0].style.display="block";
+}
+function offS(){
+	document.getElementsByClassName("fit")[0].style.display="block";
+	document.getElementsByClassName("settings")[0].style.display="none";
+}
+function onM(){
+	document.getElementsByClassName("fit")[0].style.display="none";
+	document.getElementsByClassName("machine")[0].style.display="block";
+}
+function offM(){
+	document.getElementsByClassName("fit")[0].style.display="block";
+	document.getElementsByClassName("machine")[0].style.display="none";
+}
+</script>
+</body>
+</html>

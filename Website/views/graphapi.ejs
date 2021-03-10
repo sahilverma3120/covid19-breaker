@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8"><title>Vit Hack</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script> -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+	
+
+	<script type="text/javascript"></script>
+	<script>
+  function removeEmpties() {return true;}
+		
+	function download() {
+		console.log("hello");
+  // get size of report page
+  var reportPageHeight = 842;//$('#reportPage').innerHeight();
+  var reportPageWidth = 595;//$('#reportPage').innerWidth();
+
+  // create a new canvas object that we will populate with all other canvas objects
+  var pdfCanvas = $('<canvas />').attr({
+    id: "canvaspdf",
+    width: reportPageWidth,
+    height: reportPageHeight
+  });
+
+  // keep track canvas position
+  var pdfctx = $(pdfCanvas)[0].getContext('2d');
+  var pdfctxX = 0;
+  var pdfctxY = 0;
+  var buffer = 100;
+
+  // for each chart.js chart
+  $("canvas").each(function(index) {
+    // get the chart height/width
+    var canvasHeight = $(this).innerHeight();
+    var canvasWidth = $(this).innerWidth();
+
+    // draw the chart into the new canvas
+    pdfctx.drawImage($(this)[0], pdfctxX, pdfctxY, canvasWidth, canvasHeight);
+    pdfctxX += canvasWidth + buffer;
+
+    // our report page is in a grid pattern so replicate that in the new canvas
+    if (index % 2 === 1) {
+      pdfctxX = 0;
+      pdfctxY += canvasHeight + buffer;
+    }
+  });
+
+  // create new pdf and add our new canvas as an image
+  var pdf = new jsPDF('l', 'pt', [reportPageWidth, reportPageHeight]);
+  pdf.addImage($(pdfCanvas)[0], 'PNG', 0, 0);
+
+  // download the pdf
+  pdf.save('graph.pdf');
+}
+
+	</script>
+
+</head>
+<body>
+	<div class="container">
+		<div style="margin:3%;text-align:center;">
+			<h2 >Visualise the data</h2>
+			<small class="text-muted"><a href="/api/docs">API Documentation</a></small>
+		</div>
+	
+
+	<form id="theform" action="https://vithack.herokuapp.com/api/deceased" method="GET" onsubmit="return removeEmpties()">
+
+	<div class="form-row">
+
+<div class="form-group col-md-4">
+  <label for="state">State</label>
+  <select name="state" id="state" class="form">
+	<option value="">All States</option>
+<option value="Andhra Pradesh">Andhra Pradesh</option>
+<option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+<option value="Assam">Assam</option>
+<option value="Bihar">Bihar</option>
+<option value="Chandigarh">Chandigarh</option>
+<option value="Chhattisgarh">Chhattisgarh</option>
+<option value="Dadar and Nagar Haveli">Dadar and Nagar Haveli</option>
+<option value="Daman and Diu">Daman and Diu</option>
+<option value="Delhi">Delhi</option>
+<option value="Lakshadweep">Lakshadweep</option>
+<option value="Puducherry">Puducherry</option>
+<option value="Goa">Goa</option>
+<option value="Gujarat">Gujarat</option>
+<option value="Haryana">Haryana</option>
+<option value="Himachal Pradesh">Himachal Pradesh</option>
+<option value="Jammu and Kashmir">Jammu and Kashmir</option>
+<option value="Jharkhand">Jharkhand</option>
+<option value="Karnataka">Karnataka</option>
+<option value="Kerala">Kerala</option>
+<option value="Madhya Pradesh">Madhya Pradesh</option>
+<option value="Maharashtra">Maharashtra</option>
+<option value="Manipur">Manipur</option>
+<option value="Meghalaya">Meghalaya</option>
+<option value="Mizoram">Mizoram</option>
+<option value="Nagaland">Nagaland</option>
+<option value="Odisha">Odisha</option>
+<option value="Punjab">Punjab</option>
+<option value="Rajasthan">Rajasthan</option>
+<option value="Sikkim">Sikkim</option>
+<option value="Tamil Nadu">Tamil Nadu</option>
+<option value="Telangana">Telangana</option>
+<option value="Tripura">Tripura</option>
+<option value="Uttar Pradesh">Uttar Pradesh</option>
+<option value="Uttarakhand">Uttarakhand</option>
+<option value="West Bengal">West Bengal</option>
+</select>
+</div>
+
+<div class="form-group col-md-4">
+  <label for="gender">Gender</label>
+  <select name="gender" id="gender" class="form">
+			<option value="male">Male</option>
+			<option value="female">Female</option>
+			<option value="">Both</option>
+		</select>
+</div>
+		<div class="form-group col-md-4">
+		<label for="ageEstimate">Age</label>
+		<input name="ageEstimate" id="ageEstimate" value="">
+	  </div>
+
+</div>
+
+
+
+	  
+	  <!-- <div class="form-group col-md-4">
+		<label for="reportedOn">Date</label>
+		<input name="reportedOn" id="reportedOn" value="">
+	  </div> -->
+		<div style="text-align:center;">
+			<button type="submit" class="btn btn-primary">Get graph</button>
+		</div>
+
+	</form>
+	
+	<div style="width:100%;height:100%;margin-top:3%;"><canvas id="myChart" width="1500" height="400"></canvas></div>
+		
+		<div style="text-align:center;">
+			<button onclick="download();" class="btn btn-primary">Download Graph</button>
+		</div>
+	</div>
+	
+
+	
+		<script>
+	document.getElementById("theform").addEventListener('submit', (ev) => {
+  //Optional, prevents redirect
+  ev.preventDefault()
+  
+  //ev.currentTarget is the form element
+  var data = new FormData(ev.currentTarget);
+
+  //modification of the code from this answer: https://stackoverflow.com/a/24964658/7448536
+  var queryParts = [];
+  var entries = data.entries()
+  for(var pair of entries){
+	  if(encodeURIComponent(pair[1])!="")
+    queryParts.push(encodeURIComponent(pair[0]) + "=" + encodeURIComponent(pair[1]));
+  }
+  var Query = queryParts.join("&")
+  var loc = window.location;
+  //reassemble the url
+  // var url = loc.protocol+'//'+loc.host+loc.pathname+'?'+query
+  console.log(Query);
+		
+		
+		$.ajax({
+			url: "/api/deceased?status=Deceased&"+Query,
+			dataType: "json",
+			type: "GET",
+			success: function(result){
+				console.log(result);
+				var date = [];
+				var person = [];
+				var umap = {};
+				var newdate=[];
+				result.forEach(function(report){
+					date.push(report["reportedOn"]);
+				})
+				date.forEach(function(curr){
+					if(umap.hasOwnProperty(curr)){
+						umap[curr]++;
+					}
+					else{
+						umap[curr]=1;
+					}
+				})
+				for (key in umap){
+					newdate.push(key);
+					person.push(umap[key]);
+				}
+				
+				var ctx = document.getElementById('myChart').getContext('2d');	
+				var myChart = new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: newdate,
+						datasets: [{
+							label: '# of Deceased people',
+							data: person,
+							// backgroundColor: [
+							// 	'rgba(255, 99, 132, 0.2)',
+							// 	'rgba(54, 162, 235, 0.2)',
+							// 	'rgba(255, 206, 86, 0.2)',
+							// 	'rgba(75, 192, 192, 0.2)',
+							// 	'rgba(153, 102, 255, 0.2)',
+							// 	'rgba(255, 159, 64, 0.2)'
+							// ],
+							// borderColor: [
+							// 	'rgba(255, 99, 132, 1)',
+							// 	'rgba(54, 162, 235, 1)',
+							// 	'rgba(255, 206, 86, 1)',
+							// 	'rgba(75, 192, 192, 1)',
+							// 	'rgba(153, 102, 255, 1)',
+							// 	'rgba(255, 159, 64, 1)'
+							// ],
+							borderWidth: 1
+						}]
+					},
+					responsive: true,
+						maintainAspectRatio: false,
+					options: {
+						
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero: true,
+									max: 10,
+									min: 0,
+									stepSize: 1
+								}
+							}]
+						}
+					}
+				});//chart
+			}
+		})
+})
+</script>
+</body>
+</html>

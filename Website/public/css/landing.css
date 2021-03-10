@@ -1,0 +1,168 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+p{
+	color:white;
+}
+body{
+	background-color:#88BFB5;
+}
+a{
+	text-decoration:none;
+}
+input options{
+  font-family: inherit;
+  /* width: 100%; */
+  border: 0;
+  border-bottom: 2px solid $gray;
+  outline: 0;
+  font-size: 1.3rem;
+  /* color: $white; */
+  /* padding: 7px 0; */
+  /* background: transparent; */
+  transition: border-color 0.2s;
+
+  &::placeholder {
+    color: transparent;
+  }
+
+  &:placeholder-shown ~ .form__label {
+    font-size: 1.3rem;
+    cursor: text;
+    top: 20px;
+  }
+}
+.heading{
+	text-align:center;
+	margin-bottom:5%;
+	font-family:"Impact", Charcoal, sans-serif
+	
+}
+#button1 #button2 {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.form-group{
+	margin-left:5%;
+}
+
+#button1 #button2 {
+  background-color: #4CAF50; 
+  color: white; 
+  border: 2px solid #4CAF50;
+}
+
+#button1 #button2:hover {
+  background-color: white;
+  color: black;
+}
+:root {
+--primary-color: #86b894;
+	/* #D96AA7 */
+--secondary-color: #422C73;
+--complimentary-color: #88BFB5;
+--contrast-color: #F2E527;
+--light-color: #D2A9D9;
+}
+
+.container {
+  background: #191919;
+  /* min-height: 100vh; */
+	
+	height:100%;
+  font-family: Montserrat, sans-serif;
+}
+
+nav a {
+    font-size: 40px;
+    color: #fff;
+    text-decoration: none;
+    padding: 20px;
+    text-align: center;
+}
+i::before{
+    background:transparent;
+}
+nav {
+    position: fixed;
+    left: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    height: 100vh;
+    background: var(--secondary-color);
+}
+
+section {
+	display:inline-block;
+    position: absolute;
+    top: 0;
+    height: 100%;
+	padding-left:10%;
+	padding-right:5%;
+	/* height:100%; */
+    width: 0;
+    opacity: 0;
+    transition: all ease-in .5s;
+    display: flex;
+    justify-content: center;
+	overflow:auto;
+    /* align-items: center; */
+} 
+
+section h1 {
+    color: #fff;
+    font-size: 50px;
+    text-transform: uppercase;
+    opacity: 0;
+}
+
+/* Styles applied on trigger */
+section:target {
+    opacity: 1;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+section:target h1 {
+    opacity: 0;
+    animation: 2s fadeIn forwards .5s;
+}
+
+#first {
+  background:var(--primary-color);
+}
+#second {
+    background: var(--complimentary-color);
+}
+
+#third {
+    background: var(--contrast-color);
+}
+
+#fourth {
+    background: var(--light-color);
+}
+#fifth{
+	 background: var(--light-color);
+}
+@keyframes fadeIn {
+    100% { opacity:1 }
+}
+
+
